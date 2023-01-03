@@ -1,0 +1,230 @@
+definitions:
+  formatter.AuthUser:
+    properties:
+      id:
+        example: dd724b0b-8907-41b2-807b-7d359dd77f4c
+        type: string
+      password:
+        example: P@ssW0rD
+        type: string
+    required:
+    - id
+    - password
+    type: object
+  formatter.CreateUser:
+    properties:
+      age:
+        example: 42
+        type: integer
+      biography:
+        example: '-'
+        type: string
+      city:
+        example: Moscow
+        type: string
+      gender:
+        example: male
+        type: string
+      last_name:
+        example: Ivanov
+        type: string
+      name:
+        example: Ivan
+        type: string
+      password:
+        example: P@ssW0rD
+        type: string
+    required:
+    - age
+    - biography
+    - city
+    - gender
+    - last_name
+    - name
+    - password
+    type: object
+  formatter.Error:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+      request_id:
+        type: string
+    required:
+    - message
+    type: object
+  formatter.GetUser:
+    properties:
+      age:
+        example: 42
+        type: integer
+      biography:
+        example: '-'
+        type: string
+      city:
+        example: Moscow
+        type: string
+      gender:
+        example: male
+        type: string
+      id:
+        example: dd724b0b-8907-41b2-807b-7d359dd77f4c
+        type: string
+      last_name:
+        example: Ivanov
+        type: string
+      name:
+        example: Ivan
+        type: string
+    required:
+    - age
+    - biography
+    - city
+    - gender
+    - id
+    - last_name
+    - name
+    type: object
+  formatter.TokenResp:
+    properties:
+      token:
+        example: jwt token
+        type: string
+    type: object
+host: localhost:5050
+info:
+  contact:
+    email: a.m.tsitulskiy@gmail.com
+    name: API Backend
+  title: Backend swagger
+  version: "1.0"
+paths:
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Упрощенный процесс аутентификации путем передачи идентификатор пользователя
+        и получения токена для дальнейшего прохождения авторизации
+      parameters:
+      - description: ИД/пароль пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/formatter.AuthUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная аутентификация
+          schema:
+            $ref: '#/definitions/formatter.TokenResp'
+        "400":
+          description: Невалидные данные
+        "404":
+          description: Пользователь не найден
+        "500":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+        "503":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+      summary: Аутентификация пользователя
+      tags:
+      - auth
+  /api/v1/user:
+    post:
+      consumes:
+      - application/json
+      description: Регистрация нового пользователя
+      parameters:
+      - description: Даннные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/formatter.CreateUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Успешная регистрация
+          schema:
+            $ref: '#/definitions/formatter.GetUser'
+        "400":
+          description: Невалидные данные
+        "500":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+        "503":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+      summary: Зарегистрировать пользователя
+      tags:
+      - users
+  /api/v1/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Получить анкету пользователя по ИД
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешное получение анкеты пользователя
+          schema:
+            $ref: '#/definitions/formatter.GetUser'
+        "400":
+          description: Невалидные данные
+        "404":
+          description: Анкета не найдена
+        "500":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+        "503":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+      summary: Получить анкету пользователя по ИД
+      tags:
+      - users
+schemes:
+- http
+swagger: "2.0"
