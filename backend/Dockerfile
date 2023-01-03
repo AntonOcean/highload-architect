@@ -19,10 +19,6 @@ RUN GOOS=linux GOARCH=amd64 go build -tags=jsoniter -o main ./cmd/main
 
 FROM debian:buster-slim
 
-ARG http_proxy
-ARG https_proxy
-ARG no_proxy
-
 WORKDIR /app
 
 COPY --from=builder /app/main /app/
