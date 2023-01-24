@@ -26,3 +26,6 @@
 3) [Swagger](http://127.0.0.1:5050/swagger/index.html)
 4) [Postman-коллекция](https://github.com/AntonOcean/highload-architect/blob/970ec4692831e9e9d9abfa2e08683dea5b06925f/backend/docs/Backend%20swagger.postman_collection.json)
 
+### Нагрузочное тестирование
+
+[Отчет](https://github.com/AntonOcean/highload-architect/blob/e1f1b57b659ac771825fc25b2a18e71310dd0964/backend/docs/highload-report.pdf)
