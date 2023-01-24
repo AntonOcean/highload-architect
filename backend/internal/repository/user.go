@@ -68,7 +68,7 @@ func (rw rw) GetUsersByPrefix(ctx context.Context, firstName, lastName string) (
 			u.password
 		FROM users u 
 		WHERE u.first_name LIKE $1 AND u.last_name LIKE $2
-		ORDER BY u.id;`,
+		ORDER BY u.id;`, // TODO add limit/offset for performance
 		fmt.Sprintf("%s%%", firstName), fmt.Sprintf("%s%%", lastName),
 	)
 	if err != nil {
