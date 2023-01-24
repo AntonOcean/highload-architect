@@ -18,6 +18,7 @@ type Auth interface {
 type User interface {
 	CreateUser(ctx context.Context, user *domain.User) error
 	GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, error)
+	GetUsersByPrefix(ctx context.Context, firstName, lastName string) ([]*domain.User, error)
 }
 
 type ServiceUsecase interface {

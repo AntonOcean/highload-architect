@@ -78,6 +78,76 @@
             }
         },
         "/api/v1/user": {
+            "get": {
+                "description": "Поиск анкет",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Поиск анкет",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Условие поиска по имени",
+                        "name": "first_name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Условие поиска по фамилии",
+                        "name": "last_name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный поиск пользователей",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/formatter.GetUser"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Невалидные данные"
+                    },
+                    "404": {
+                        "description": "Анкета не найдена"
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/formatter.Error"
+                        },
+                        "headers": {
+                            "Retry-After": {
+                                "type": "integer",
+                                "description": "Время, через которое еще раз нужно сделать запрос"
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/formatter.Error"
+                        },
+                        "headers": {
+                            "Retry-After": {
+                                "type": "integer",
+                                "description": "Время, через которое еще раз нужно сделать запрос"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Регистрация нового пользователя",
                 "consumes": [

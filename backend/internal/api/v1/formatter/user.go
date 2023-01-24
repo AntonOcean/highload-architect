@@ -30,6 +30,11 @@ type CreateUser struct {
 	UserPassword
 }
 
+type SearchUser struct {
+	FirstName string `form:"first_name"`
+	LastName  string `form:"last_name"`
+}
+
 func (u *CreateUser) ToDomain() (*domain.User, error) {
 	errStrings := make([]string, 0)
 
@@ -111,4 +116,34 @@ func CreateUserResp(user *domain.User) *GetUser {
 			City:      user.City,
 		},
 	}
+}
+
+func CreateUserListResp(users []*domain.User) []*GetUser {
+	response := make([]*GetUser, len(users))
+
+	for i := range users {
+		response[i] = CreateUserResp(users[i])
+	}
+
+	return response
+}
+
+func (q *SearchUser) ToDomain() error {
+	errStrings := make([]string, 0)
+
+	q.LastName = strings.TrimSpace(q.LastName)
+	if q.LastName == "" {
+		errStrings = append(errStrings, "Поле <Фамилия> не может быть пустым")
+	}
+
+	q.FirstName = strings.TrimSpace(q.FirstName)
+	if q.FirstName == "" {
+		errStrings = append(errStrings, "Поле <Имя> не может быть пустым")
+	}
+
+	if len(errStrings) > 0 {
+		return fmt.Errorf("%w: %s", ErrInvalidData, strings.Join(errStrings, "; "))
+	}
+
+	return nil
 }

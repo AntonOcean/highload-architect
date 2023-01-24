@@ -83,3 +83,44 @@ func (rH RouterHandler) GetUserByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, formatter.CreateUserResp(user))
 }
+
+// GetUsers godoc
+// @Description Поиск анкет
+// @Summary Поиск анкет
+// @tags users
+// @Accept json
+// @Produce json
+// @Param first_name query string true "Условие поиска по имени"
+// @Param last_name query string true "Условие поиска по фамилии"
+// @Success 200 {object} []formatter.GetUser "Успешный поиск пользователей"
+// @Failure 400 "Невалидные данные"
+// @Failure 404 "Анкета не найдена"
+// @Failure 500 {object} formatter.Error "Ошибка сервера"
+// @Failure 503 {object} formatter.Error "Ошибка сервера"
+// @Header 500,503 {integer} Retry-After "Время, через которое еще раз нужно сделать запрос"
+// @Router /api/v1/user [get].
+func (rH RouterHandler) GetUsers(c *gin.Context) {
+	var request formatter.SearchUser
+
+	ctx := c.Request.Context()
+
+	err := c.ShouldBindQuery(&request)
+	if err != nil {
+		_ = c.Error(fmt.Errorf("%w %v", formatter.ErrInvalidData, err))
+		return
+	}
+
+	err = request.ToDomain()
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	users, err := rH.ucService.GetUsersByPrefix(ctx, request.FirstName, request.LastName)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, formatter.CreateUserListResp(users))
+}

@@ -145,6 +145,53 @@ paths:
       tags:
       - auth
   /api/v1/user:
+    get:
+      consumes:
+      - application/json
+      description: Поиск анкет
+      parameters:
+      - description: Условие поиска по имени
+        in: query
+        name: first_name
+        required: true
+        type: string
+      - description: Условие поиска по фамилии
+        in: query
+        name: last_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный поиск пользователей
+          schema:
+            items:
+              $ref: '#/definitions/formatter.GetUser'
+            type: array
+        "400":
+          description: Невалидные данные
+        "404":
+          description: Анкета не найдена
+        "500":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+        "503":
+          description: Ошибка сервера
+          headers:
+            Retry-After:
+              description: Время, через которое еще раз нужно сделать запрос
+              type: integer
+          schema:
+            $ref: '#/definitions/formatter.Error'
+      summary: Поиск анкет
+      tags:
+      - users
     post:
       consumes:
       - application/json

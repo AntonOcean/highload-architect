@@ -21,7 +21,8 @@ func NewRouter(i usecase.ServiceUsecase, logger *zap.Logger) RouterHandler {
 
 func (rH RouterHandler) RegisterRoutes(router *gin.RouterGroup) {
 	router.POST("/login", rH.AuthUser)
-	// TODO router.GET("/user", rH.GetUsers)
+
+	router.GET("/user", rH.GetUsers)
 	router.POST("/user", rH.CreateUser)
 	router.GET("/user/:id", rH.GetUserByID)
 }

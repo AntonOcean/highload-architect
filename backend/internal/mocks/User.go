@@ -53,6 +53,29 @@ func (_m *User) GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User
 	return r0, r1
 }
 
+// GetUsersByPrefix provides a mock function with given fields: ctx, firstName, lastName
+func (_m *User) GetUsersByPrefix(ctx context.Context, firstName string, lastName string) ([]*domain.User, error) {
+	ret := _m.Called(ctx, firstName, lastName)
+
+	var r0 []*domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) []*domain.User); ok {
+		r0 = rf(ctx, firstName, lastName)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
+		r1 = rf(ctx, firstName, lastName)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 type mockConstructorTestingTNewUser interface {
 	mock.TestingT
 	Cleanup(func())

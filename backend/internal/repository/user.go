@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jackc/pgx/v5"
 
@@ -51,4 +52,42 @@ func (rw rw) GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, e
 	}
 
 	return &u, nil
+}
+
+func (rw rw) GetUsersByPrefix(ctx context.Context, firstName, lastName string) ([]*domain.User, error) {
+	rows, err := rw.store.Query(
+		ctx,
+		`SELECT 
+			u.id,
+			u.first_name,
+			u.last_name,
+			u.age,
+			u.gender,
+			u.biography,
+			u.city,
+			u.password
+		FROM users u 
+		WHERE u.first_name LIKE $1 AND u.last_name LIKE $2
+		ORDER BY u.id;`,
+		fmt.Sprintf("%s%%", firstName), fmt.Sprintf("%s%%", lastName),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*domain.User
+
+	for rows.Next() {
+		u := domain.User{}
+
+		err := rows.Scan(&u.ID, &u.FirstName, &u.LastName, &u.Age, &u.Gender, &u.Biography, &u.City, &u.Password)
+
+		if err != nil {
+			return nil, err
+		}
+
+		users = append(users, &u)
+	}
+
+	return users, nil
 }
