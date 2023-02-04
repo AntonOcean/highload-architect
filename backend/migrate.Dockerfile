@@ -1,8 +1,4 @@
-FROM golang:1.19-buster as builder
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends git && \
-    go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+FROM migrate/migrate:4
 
 WORKDIR /app
 
