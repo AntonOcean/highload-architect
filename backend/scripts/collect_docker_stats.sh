@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+rm data.csv
+rm dockerstats
+
 while true
 do docker stats --no-stream --format "table {{.Name}};{{.CPUPerc}};{{.MemPerc}};{{.MemUsage}};{{.NetIO}};{{.BlockIO}};{{.PIDs}}" > dockerstats
 tail -n +2 dockerstats | awk -v date=";$(date +%T)" '{print $0, date}' >> data.csv

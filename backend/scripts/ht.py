@@ -22,6 +22,9 @@ HT_PARAMS = {
     'last_name': [],
     'first_name': [],
 }
+HT_PARAMS_ID = {
+    'id': []
+}
 
 
 def generate_one():
@@ -57,12 +60,16 @@ def main():
     for tpl in df.to_records(index=False):
         HT_PARAMS['last_name'].append(tpl[1][:random.randint(1, 4)])
         HT_PARAMS['first_name'].append(tpl[2][:random.randint(1, 4)])
+        HT_PARAMS_ID['id'].append(tpl[0])
 
     random.shuffle(HT_PARAMS['last_name'])
     random.shuffle(HT_PARAMS['first_name'])
 
     df = pd.DataFrame(HT_PARAMS)
     df.to_csv('people_params.csv', index=False, header=False)
+
+    df = pd.DataFrame(HT_PARAMS_ID)
+    df.to_csv('people_params_id.csv', index=False, header=False)
 
 
 if __name__ == '__main__':

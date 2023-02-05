@@ -30,3 +30,11 @@ build:
 .PHONY: ht
 ht:
 	./scripts/highload_data.sh
+
+.PHONY: stats
+stats:
+	./scripts/collect_docker_stats.sh
+
+.PHONY: show-stats
+show-stats:
+	./scripts/plot_docker_stats.sh
