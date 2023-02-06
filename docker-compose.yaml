@@ -8,6 +8,8 @@ services:
     volumes:
       - pg_0_data:/bitnami/postgresql
     environment:
+#      - POSTGRESQL_SYNCHRONOUS_COMMIT_MODE=on
+#      - POSTGRESQL_NUM_SYNCHRONOUS_REPLICAS=2
       - POSTGRESQL_POSTGRES_PASSWORD=adminpassword
       - POSTGRESQL_USERNAME=customuser
       - POSTGRESQL_PASSWORD=custompassword
@@ -72,7 +74,7 @@ services:
     ports:
       - 5432:5432
     environment:
-      - PGPOOL_BACKEND_NODES=0:pg-0:5432:0:pg-0:ALWAYS_PRIMARY|DISALLOW_TO_FAILOVER,1:pg-1:5432:1:pg-1:DISALLOW_TO_FAILOVER,2:pg-2:5432:1:pg-2:DISALLOW_TO_FAILOVER
+      - PGPOOL_BACKEND_NODES=0:pg-0:5432:0:pg-0:ALLOW_TO_FAILOVER,1:pg-1:5432:1:pg-1:ALLOW_TO_FAILOVER,2:pg-2:5432:1:pg-2:ALLOW_TO_FAILOVER
       - PGPOOL_SR_CHECK_USER=customuser
       - PGPOOL_SR_CHECK_PASSWORD=custompassword
       - PGPOOL_ENABLE_LDAP=no
