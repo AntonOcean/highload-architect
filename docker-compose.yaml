@@ -10,7 +10,7 @@ services:
       POSTGRES_USERNAME: "someuser"
       POSTGRES_PASSWORD: "p@ssw0rD"
     ports:
-      - "5432:5432"
+      - "5432"
     volumes:
       - 'postgresql_master_data:/bitnami/postgresql'
     healthcheck:
@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
-  db-slave:
+  db-slave-1:
     image: bitnami/postgresql:14
     environment:
       POSTGRESQL_REPLICATION_MODE: "slave"
@@ -32,13 +32,63 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "5433:5432"
+      - "5432"
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U someuser -d default-db" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
+  db-slave-2:
+    image: bitnami/postgresql:14
+    environment:
+      POSTGRESQL_REPLICATION_MODE: "slave"
+      POSTGRESQL_REPLICATION_USER: "repl_user"
+      POSTGRESQL_REPLICATION_PASSWORD: "repl_password"
+      POSTGRESQL_MASTER_HOST: "db"
+      POSTGRESQL_PASSWORD: "p@ssw0rD"
+      POSTGRESQL_MASTER_PORT_NUMBER: "5432"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U someuser -d default-db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  pgpool:
+    image: bitnami/pgpool:latest
+    ports:
+      - 5432:5432
+    environment:
+      # <Index>:<hostname>:<port>:<weight>:<directory>:<flags>
+      PGPOOL_BACKEND_NODES: "0:db:5432:0:db:ALWAYS_PRIMARY|DISALLOW_TO_FAILOVER,1:db-slave-1:5432:1:db_slave_1:DISALLOW_TO_FAILOVER,2:db-slave-2:5432:1:pg_slave_2:DISALLOW_TO_FAILOVER"
+      PGPOOL_ENABLE_LOAD_BALANCING: "yes"
+      PGPOOL_ENABLE_STATEMENT_LOAD_BALANCING: "yes"
+      PGPOOL_POSTGRES_USERNAME: "someuser"
+      PGPOOL_POSTGRES_PASSWORD: "p@ssw0rD"
+      PGPOOL_ADMIN_USERNAME: "pgpool_admin"
+      PGPOOL_ADMIN_PASSWORD: "pgpool_password"
+      PGPOOL_SR_CHECK_USER: "repl_user"
+      PGPOOL_SR_CHECK_PASSWORD: "repl_password"
+      PGPOOL_ENABLE_LDAP: "no"
+      PGPOOL_HEALTH_CHECK_MAX_RETRIES: 10
+      PGPOOL_ENABLE_LOG_CONNECTIONS: "yes"
+      PGPOOL_ENABLE_LOG_PER_NODE_STATEMENT: "yes"
+      PGPOOL_SR_CHECK_DATABASE: "default-db"
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/bitnami/scripts/pgpool/healthcheck.sh" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    depends_on:
+      db-slave-1:
+        condition: service_healthy
+      db-slave-2:
+        condition: service_healthy
   migrations:
     build:
       context: ./backend
@@ -50,7 +100,7 @@ services:
       - POSTGRES_PASSWORD=p@ssw0rD
       - POSTGRES_DB=default-db
     depends_on:
-      db-slave:
+      pgpool:
         condition: service_healthy
   backend:
     build:
@@ -59,7 +109,7 @@ services:
     ports:
       - "5050:5050"
     environment:
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=pgpool
       - POSTGRES_PORT=5432
       - POSTGRES_USER=someuser
       - POSTGRES_PASSWORD=p@ssw0rD
