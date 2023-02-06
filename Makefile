@@ -8,5 +8,4 @@ run-jmeter:
 
 .PHONY: show-nodes
 show-nodes:
-	PGPASSWORD=p@ssw0rD psql -U someuser -h localhost -p 5432 -d default-db -c "show pool_nodes;"
-
+	PGPASSWORD=adminpassword psql -U postgres -h localhost -p 5432 -d postgres -c "show pool_nodes;"

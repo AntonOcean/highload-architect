@@ -34,7 +34,7 @@ type Config struct {
 }
 
 func (cfg *Config) PostgresDSN() string {
-	return fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s target_session_attrs=read-only sslmode=disable",
+	return fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
 		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.Database, cfg.Postgres.User, cfg.Postgres.Password,
 	)
 }
