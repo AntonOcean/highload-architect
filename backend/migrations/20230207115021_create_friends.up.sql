@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS friends
+(
+    user_id UUID REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    friend_id UUID REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    created TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+    PRIMARY KEY (user_id, friend_id)
+);

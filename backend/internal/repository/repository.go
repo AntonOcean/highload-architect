@@ -19,8 +19,14 @@ type User interface {
 	GetUsersByPrefix(ctx context.Context, firstName, lastName string) ([]*domain.User, error)
 }
 
+type Friend interface {
+	CreateFriend(ctx context.Context, userID, friendID uuid.UUID) error
+	DeleteFriend(ctx context.Context, userID, friendID uuid.UUID) error
+}
+
 type ServiceRepository interface {
 	User
+	Friend
 }
 
 func New(dbpool *pgxpool.Pool) ServiceRepository {

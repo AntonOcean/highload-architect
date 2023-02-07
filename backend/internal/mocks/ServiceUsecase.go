@@ -37,6 +37,41 @@ func (_m *ServiceUsecase) AuthUser(ctx context.Context, userID uuid.UUID, passwo
 	return r0, r1
 }
 
+// CreateFriend provides a mock function with given fields: ctx, userID, friendID
+func (_m *ServiceUsecase) CreateFriend(ctx context.Context, userID uuid.UUID, friendID uuid.UUID) error {
+	ret := _m.Called(ctx, userID, friendID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, uuid.UUID) error); ok {
+		r0 = rf(ctx, userID, friendID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// CreateToken provides a mock function with given fields: ctx, userID
+func (_m *ServiceUsecase) CreateToken(ctx context.Context, userID uuid.UUID) (string, error) {
+	ret := _m.Called(ctx, userID)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) string); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // CreateUser provides a mock function with given fields: ctx, user
 func (_m *ServiceUsecase) CreateUser(ctx context.Context, user *domain.User) error {
 	ret := _m.Called(ctx, user)
@@ -49,6 +84,43 @@ func (_m *ServiceUsecase) CreateUser(ctx context.Context, user *domain.User) err
 	}
 
 	return r0
+}
+
+// DeleteFriend provides a mock function with given fields: ctx, userID, friendID
+func (_m *ServiceUsecase) DeleteFriend(ctx context.Context, userID uuid.UUID, friendID uuid.UUID) error {
+	ret := _m.Called(ctx, userID, friendID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, uuid.UUID) error); ok {
+		r0 = rf(ctx, userID, friendID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// GetTokenData provides a mock function with given fields: ctx, token
+func (_m *ServiceUsecase) GetTokenData(ctx context.Context, token string) (*domain.Claims, error) {
+	ret := _m.Called(ctx, token)
+
+	var r0 *domain.Claims
+	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.Claims); ok {
+		r0 = rf(ctx, token)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Claims)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, token)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetUserByID provides a mock function with given fields: ctx, userID

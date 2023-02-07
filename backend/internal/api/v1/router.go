@@ -26,3 +26,14 @@ func (rH RouterHandler) RegisterRoutes(router *gin.RouterGroup) {
 	router.POST("/user", rH.CreateUser)
 	router.GET("/user/:id", rH.GetUserByID)
 }
+
+func (rH RouterHandler) RegisterAuthRoutes(router *gin.RouterGroup) {
+	router.POST("friend", rH.CreateFriend)
+	router.DELETE("friend/:id", rH.DeleteFriendByID)
+}
+
+// router.GET("post", rH.GetPosts)
+// router.POST("post", rH.CreatePost)
+// router.PUT("post/:id", rH.EditPost)
+// router.GET("post/:id", rH.GetPostByID)
+// router.DELETE("post/:id", rH.DeletePostByID)

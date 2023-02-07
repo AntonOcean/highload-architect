@@ -16,6 +16,20 @@ type ServiceRepository struct {
 	mock.Mock
 }
 
+// CreateFriend provides a mock function with given fields: ctx, userID, friendID
+func (_m *ServiceRepository) CreateFriend(ctx context.Context, userID uuid.UUID, friendID uuid.UUID) error {
+	ret := _m.Called(ctx, userID, friendID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, uuid.UUID) error); ok {
+		r0 = rf(ctx, userID, friendID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // CreateUser provides a mock function with given fields: ctx, user
 func (_m *ServiceRepository) CreateUser(ctx context.Context, user *domain.User) error {
 	ret := _m.Called(ctx, user)
@@ -23,6 +37,20 @@ func (_m *ServiceRepository) CreateUser(ctx context.Context, user *domain.User) 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, *domain.User) error); ok {
 		r0 = rf(ctx, user)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// DeleteFriend provides a mock function with given fields: ctx, userID, friendID
+func (_m *ServiceRepository) DeleteFriend(ctx context.Context, userID uuid.UUID, friendID uuid.UUID) error {
+	ret := _m.Called(ctx, userID, friendID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, uuid.UUID) error); ok {
+		r0 = rf(ctx, userID, friendID)
 	} else {
 		r0 = ret.Error(0)
 	}

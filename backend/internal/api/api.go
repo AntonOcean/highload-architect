@@ -27,7 +27,12 @@ func New(
 	registerHealthCheck(router, db)
 
 	routerHandler := v1.NewRouter(ucService, log)
-	routerHandler.RegisterRoutes(router.Group("/api/v1"))
+
+	api := router.Group("/api/v1")
+	routerHandler.RegisterRoutes(api)
+
+	apiAuth := router.Group("/api/v1", routerHandler.AuthMiddleware())
+	routerHandler.RegisterAuthRoutes(apiAuth)
 
 	return router
 }

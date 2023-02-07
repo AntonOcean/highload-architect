@@ -26,7 +26,7 @@ func TestUsecase_AuthUser(t *testing.T) {
 		mockServiceRepo := mocks.ServiceRepository{}
 		userID := uuid.New()
 
-		secretKey := "key"
+		const secretKey = "key"
 		pwdRight := "my_password"
 		hashPwd, err := bcrypt.GenerateFromPassword([]byte(pwdRight), bcrypt.DefaultCost)
 		if err != nil {
@@ -89,6 +89,88 @@ func TestUsecase_AuthUser(t *testing.T) {
 				assert.Equal(t, ok, true)
 				return
 			}
+
+			assert.Equal(t, data.UserID, userID)
+			assert.Equal(t, data.TokenType, string(domain.Access))
+			assert.Equal(t, data.Issuer, "backend.auth.service")
+			assert.Greater(t, data.ExpiresAt, time.Now().Unix())
+		})
+	})
+}
+
+func TestUsecase_CreateToken(t *testing.T) {
+	t.Run("create token", func(t *testing.T) {
+		mockServiceRepo := mocks.ServiceRepository{}
+		userID := uuid.New()
+		const secretKey = "key"
+		logger := zaptest.NewLogger(t)
+
+		uc := usecase.New(
+			&mockServiceRepo,
+			logger,
+			&config.Jwt{
+				ExpirationMinutes: 10,
+				Expiration:        time.Duration(10),
+				SignKey:           secretKey,
+			},
+		)
+		at(time.Unix(0, 0), func() {
+			token, err := uc.CreateToken(context.Background(), userID)
+			assert.Equal(t, err, nil)
+			assert.NotEmpty(t, token)
+
+			tokenObj, err := jwt.ParseWithClaims(token, &domain.Claims{}, func(token *jwt.Token) (interface{}, error) {
+				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+					return nil, errors.New("unexpected signing method")
+				}
+				return []byte(secretKey), nil
+			})
+
+			if err != nil {
+				assert.Nil(t, err)
+				return
+			}
+
+			assert.Equal(t, tokenObj.Valid, true)
+
+			data, ok := tokenObj.Claims.(*domain.Claims)
+			if !ok {
+				assert.Equal(t, ok, true)
+				return
+			}
+
+			assert.Equal(t, data.UserID, userID)
+			assert.Equal(t, data.TokenType, string(domain.Access))
+			assert.Equal(t, data.Issuer, "backend.auth.service")
+			assert.Greater(t, data.ExpiresAt, time.Now().Unix())
+		})
+	})
+}
+
+func TestUsecase_GetToken(t *testing.T) {
+	t.Run("get token", func(t *testing.T) {
+		mockServiceRepo := mocks.ServiceRepository{}
+		userID := uuid.New()
+		secretKey := "key"
+		logger := zaptest.NewLogger(t)
+
+		uc := usecase.New(
+			&mockServiceRepo,
+			logger,
+			&config.Jwt{
+				ExpirationMinutes: 10,
+				Expiration:        time.Duration(10),
+				SignKey:           secretKey,
+			},
+		)
+		at(time.Unix(0, 0), func() {
+			token, err := uc.CreateToken(context.Background(), userID)
+			assert.Equal(t, err, nil)
+			assert.NotEmpty(t, token)
+
+			data, err := uc.GetTokenData(context.Background(), token)
+			assert.Equal(t, err, nil)
+			assert.NotEmpty(t, data)
 
 			assert.Equal(t, data.UserID, userID)
 			assert.Equal(t, data.TokenType, string(domain.Access))

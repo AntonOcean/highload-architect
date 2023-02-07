@@ -13,6 +13,8 @@ import (
 
 type Auth interface {
 	AuthUser(ctx context.Context, userID uuid.UUID, password string) (string, error)
+	CreateToken(ctx context.Context, userID uuid.UUID) (string, error)
+	GetTokenData(ctx context.Context, token string) (*domain.Claims, error)
 }
 
 type User interface {
@@ -21,9 +23,15 @@ type User interface {
 	GetUsersByPrefix(ctx context.Context, firstName, lastName string) ([]*domain.User, error)
 }
 
+type Friend interface {
+	CreateFriend(ctx context.Context, userID, friendID uuid.UUID) error
+	DeleteFriend(ctx context.Context, userID, friendID uuid.UUID) error
+}
+
 type ServiceUsecase interface {
 	Auth
 	User
+	Friend
 }
 
 type uc struct {
