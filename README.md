@@ -20,8 +20,7 @@
 ### Инструкция по локальному запуску
 
 1) Склонировать репозиторий
-2) Внутри репозитория выполнить команду 
-   <br>``docker volume create postgresql_master_data``
+2) Внутри репозитория выполнить команду
    <br>``docker-compose up``
    
 3) [Swagger](http://127.0.0.1:5050/swagger/index.html)
