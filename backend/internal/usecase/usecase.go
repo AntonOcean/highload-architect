@@ -28,10 +28,18 @@ type Friend interface {
 	DeleteFriend(ctx context.Context, userID, friendID uuid.UUID) error
 }
 
+type Post interface {
+	CreatePost(ctx context.Context, text string, authorID uuid.UUID) (*domain.Post, error)
+	GetPostByID(ctx context.Context, postID uuid.UUID) (*domain.Post, error)
+	UpdatePost(ctx context.Context, text string, postID, userID uuid.UUID) (*domain.Post, error)
+	DeletePostByID(ctx context.Context, postID, userID uuid.UUID) error
+}
+
 type ServiceUsecase interface {
 	Auth
 	User
 	Friend
+	Post
 }
 
 type uc struct {

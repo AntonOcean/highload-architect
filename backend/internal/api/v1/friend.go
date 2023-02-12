@@ -15,7 +15,7 @@ import (
 // @Description Для пользователя с ИД(user_id) из Authorization добавляем друга с ИД из body
 // @tags friends
 // @Accept json
-// @Param user body formatter.UserID true "ИД потенциального друга"
+// @Param user body formatter.DomainID true "ИД потенциального друга"
 // @Produce json
 // @Success 201 "Пользователь успешно указал своего друга"
 // @Failure 400 "Невалидные данные"
@@ -25,7 +25,7 @@ import (
 // @Header 500,503 {integer} Retry-After "Время, через которое еще раз нужно сделать запрос"
 // @Router /api/v1/friend [post].
 func (rH RouterHandler) CreateFriend(c *gin.Context) {
-	var request formatter.UserID
+	var request formatter.DomainID
 
 	ctx := c.Request.Context()
 
@@ -73,9 +73,7 @@ func (rH RouterHandler) CreateFriend(c *gin.Context) {
 func (rH RouterHandler) DeleteFriendByID(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	request := formatter.UserID{
-		ID: c.Param("id"),
-	}
+	request := formatter.DomainIDType(c.Param("id"))
 
 	friendID, err := request.ToDomain()
 	if err != nil {

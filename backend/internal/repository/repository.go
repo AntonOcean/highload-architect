@@ -24,9 +24,17 @@ type Friend interface {
 	DeleteFriend(ctx context.Context, userID, friendID uuid.UUID) error
 }
 
+type Post interface {
+	CreatePost(ctx context.Context, post *domain.Post) error
+	GetPostByID(ctx context.Context, postID uuid.UUID) (*domain.Post, error)
+	UpdatePost(ctx context.Context, text string, postID uuid.UUID) error
+	DeletePostByID(ctx context.Context, postID uuid.UUID) error
+}
+
 type ServiceRepository interface {
 	User
 	Friend
+	Post
 }
 
 func New(dbpool *pgxpool.Pool) ServiceRepository {

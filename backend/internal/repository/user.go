@@ -14,6 +14,10 @@ import (
 )
 
 func (rw rw) CreateUser(ctx context.Context, u *domain.User) error {
+	if u == nil {
+		return nil
+	}
+
 	if _, err := rw.store.Exec(
 		ctx,
 		`INSERT INTO 

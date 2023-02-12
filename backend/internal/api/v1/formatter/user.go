@@ -21,7 +21,7 @@ type User struct {
 }
 
 type GetUser struct {
-	UserID
+	DomainID
 	User
 }
 
@@ -104,8 +104,8 @@ func CreateUserResp(user *domain.User) *GetUser {
 	}
 
 	return &GetUser{
-		UserID: UserID{
-			ID: user.ID.String(),
+		DomainID: DomainID{
+			ID: DomainIDType(user.ID.String()),
 		},
 		User: User{
 			FirstName: user.FirstName,

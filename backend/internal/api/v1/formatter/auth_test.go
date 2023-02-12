@@ -12,17 +12,17 @@ import (
 
 func TestUsecase_AuthParseUserID(t *testing.T) {
 	t.Run("parse userID", func(t *testing.T) {
-		userRequestID := formatter.UserID{ID: "90"}
+		userRequestID := formatter.DomainID{ID: "90"}
 		userID, err := userRequestID.ToDomain()
 		assert.Equal(t, userID, uuid.UUID{})
 		assert.True(t, errors.Is(err, formatter.ErrInvalidData))
 
-		userRequestID = formatter.UserID{ID: "        "}
+		userRequestID = formatter.DomainID{ID: "        "}
 		userID, err = userRequestID.ToDomain()
 		assert.Equal(t, userID, uuid.UUID{})
 		assert.True(t, errors.Is(err, formatter.ErrInvalidData))
 
-		userRequestID = formatter.UserID{ID: "dd724b0b-8907-41b2-807b-7d359dd77f4c"}
+		userRequestID = formatter.DomainID{ID: "dd724b0b-8907-41b2-807b-7d359dd77f4c"}
 		userID, err = userRequestID.ToDomain()
 		assert.Equal(t, err, nil)
 		assert.Equal(t, userID.String(), "dd724b0b-8907-41b2-807b-7d359dd77f4c")
@@ -32,7 +32,7 @@ func TestUsecase_AuthParseUserID(t *testing.T) {
 func TestUsecase_AuthParseAuth(t *testing.T) {
 	t.Run("parse auth", func(t *testing.T) {
 		passwordRequest := formatter.AuthUser{
-			UserID:       formatter.UserID{ID: "dd724b0b-8907-41b2-807b-7d359dd77f4c"},
+			DomainID:     formatter.DomainID{ID: "dd724b0b-8907-41b2-807b-7d359dd77f4c"},
 			UserPassword: formatter.UserPassword{Password: "kek"},
 		}
 
@@ -42,7 +42,7 @@ func TestUsecase_AuthParseAuth(t *testing.T) {
 		assert.Equal(t, auth.ID.String(), "dd724b0b-8907-41b2-807b-7d359dd77f4c")
 
 		passwordRequest = formatter.AuthUser{
-			UserID:       formatter.UserID{ID: "dd724b0b-8907-41b2-807b-7d359dd77f4c"},
+			DomainID:     formatter.DomainID{ID: "dd724b0b-8907-41b2-807b-7d359dd77f4c"},
 			UserPassword: formatter.UserPassword{Password: " "},
 		}
 
