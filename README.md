@@ -28,4 +28,8 @@
 
 ### Нагрузочное тестирование
 
-[Отчет](https://github.com/AntonOcean/highload-architect/blob/e1f1b57b659ac771825fc25b2a18e71310dd0964/backend/docs/highload-report.pdf)
+[Отчет](https://github.com/AntonOcean/highload-architect/blob/e1f1b57b659ac771825fc25b2a18e71310dd0964/backend/docs/highload-report-v2.pdf)
+
+### Добавление репликации
+
+[Отчет](https://github.com/AntonOcean/highload-architect/blob/e1f1b57b659ac771825fc25b2a18e71310dd0964/backend/docs/replica-report.pdf)
