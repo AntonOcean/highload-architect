@@ -17,8 +17,10 @@ func CreateTokenResp(token string) *TokenResp {
 	return &TokenResp{Token: token}
 }
 
-type UserID struct {
-	ID string `json:"id" example:"dd724b0b-8907-41b2-807b-7d359dd77f4c" binding:"required"`
+type DomainIDType string
+
+type DomainID struct {
+	ID DomainIDType `json:"id" example:"dd724b0b-8907-41b2-807b-7d359dd77f4c" binding:"required"`
 }
 
 type UserPassword struct {
@@ -26,12 +28,12 @@ type UserPassword struct {
 }
 
 type AuthUser struct {
-	UserID
+	DomainID
 	UserPassword
 }
 
 func (a *AuthUser) ToDomain() (*domain.UserAuth, error) {
-	userID, err := a.UserID.ToDomain()
+	userID, err := a.DomainID.ToDomain()
 	if err != nil {
 		return nil, err
 	}
@@ -47,8 +49,8 @@ func (a *AuthUser) ToDomain() (*domain.UserAuth, error) {
 	}, nil
 }
 
-func (u *UserID) ToDomain() (uuid.UUID, error) {
-	userStringID := strings.TrimSpace(u.ID)
+func (uid *DomainIDType) ToDomain() (uuid.UUID, error) {
+	userStringID := strings.TrimSpace(string(*uid))
 	if userStringID == "" {
 		return uuid.UUID{}, fmt.Errorf("%w %s", ErrInvalidData, "Поле <ИД> не может быть пустым")
 	}
@@ -56,9 +58,12 @@ func (u *UserID) ToDomain() (uuid.UUID, error) {
 	userID, err := uuid.Parse(userStringID)
 
 	if err != nil {
-		fmt.Println(err)
 		return uuid.UUID{}, fmt.Errorf("%w %s", ErrInvalidData, "Поле <ИД> не корректно")
 	}
 
 	return userID, nil
+}
+
+func (u *DomainID) ToDomain() (uuid.UUID, error) {
+	return u.ID.ToDomain()
 }

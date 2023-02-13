@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	ErrInvalidData = errors.New("validation error")
-	ErrNotFound    = errors.New("not found error")
+	ErrInvalidData      = errors.New("validation error")
+	ErrNotFound         = errors.New("not found error")
+	ErrPermissionDenied = errors.New("permission denied")
 )
 
 type Error struct {
@@ -43,6 +44,11 @@ func HandleErrors(c *gin.Context) {
 
 	if errors.Is(err, ErrNotFound) {
 		code = http.StatusNotFound
+		body = nil
+	}
+
+	if errors.Is(err, ErrPermissionDenied) {
+		code = http.StatusForbidden
 		body = nil
 	}
 

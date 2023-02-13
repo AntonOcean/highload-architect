@@ -65,9 +65,7 @@ func (rH RouterHandler) CreateUser(c *gin.Context) {
 func (rH RouterHandler) GetUserByID(c *gin.Context) {
 	ctx := c.Request.Context()
 
-	request := formatter.UserID{
-		ID: c.Param("id"),
-	}
+	request := formatter.DomainIDType(c.Param("id"))
 
 	userID, err := request.ToDomain()
 	if err != nil {

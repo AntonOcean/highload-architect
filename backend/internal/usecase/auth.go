@@ -29,6 +29,20 @@ func (uc uc) AuthUser(ctx context.Context, userID uuid.UUID, password string) (s
 		return "", err
 	}
 
+	token, err := uc.CreateToken(ctx, userID)
+	if err != nil {
+		return "", err
+	}
+
+	err = uc.serviceRepo.SetLastLoginUser(ctx, userID)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
+func (uc uc) CreateToken(ctx context.Context, userID uuid.UUID) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, domain.Claims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * uc.jwt.Expiration).Unix(),
@@ -39,4 +53,28 @@ func (uc uc) AuthUser(ctx context.Context, userID uuid.UUID, password string) (s
 	})
 
 	return token.SignedString([]byte(uc.jwt.SignKey))
+}
+
+func (uc uc) GetTokenData(ctx context.Context, token string) (*domain.Claims, error) {
+	tokenObj, err := jwt.ParseWithClaims(token, &domain.Claims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+		return []byte(uc.jwt.SignKey), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !tokenObj.Valid {
+		return nil, errors.New("token invalid")
+	}
+
+	data, ok := tokenObj.Claims.(*domain.Claims)
+	if !ok {
+		return nil, errors.New("token claims not parse")
+	}
+
+	return data, nil
 }

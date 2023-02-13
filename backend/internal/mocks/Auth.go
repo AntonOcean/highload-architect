@@ -4,6 +4,7 @@ package mocks
 
 import (
 	context "context"
+	domain "kek/internal/domain"
 
 	mock "github.com/stretchr/testify/mock"
 
@@ -29,6 +30,50 @@ func (_m *Auth) AuthUser(ctx context.Context, userID uuid.UUID, password string)
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, string) error); ok {
 		r1 = rf(ctx, userID, password)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// CreateToken provides a mock function with given fields: ctx, userID
+func (_m *Auth) CreateToken(ctx context.Context, userID uuid.UUID) (string, error) {
+	ret := _m.Called(ctx, userID)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) string); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetTokenData provides a mock function with given fields: ctx, token
+func (_m *Auth) GetTokenData(ctx context.Context, token string) (*domain.Claims, error) {
+	ret := _m.Called(ctx, token)
+
+	var r0 *domain.Claims
+	if rf, ok := ret.Get(0).(func(context.Context, string) *domain.Claims); ok {
+		r0 = rf(ctx, token)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*domain.Claims)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, token)
 	} else {
 		r1 = ret.Error(1)
 	}
