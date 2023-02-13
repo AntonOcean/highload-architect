@@ -29,7 +29,17 @@ func (uc uc) AuthUser(ctx context.Context, userID uuid.UUID, password string) (s
 		return "", err
 	}
 
-	return uc.CreateToken(ctx, userID)
+	token, err := uc.CreateToken(ctx, userID)
+	if err != nil {
+		return "", err
+	}
+
+	err = uc.serviceRepo.SetLastLoginUser(ctx, userID)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 func (uc uc) CreateToken(ctx context.Context, userID uuid.UUID) (string, error) {

@@ -95,3 +95,17 @@ func (rw rw) GetUsersByPrefix(ctx context.Context, firstName, lastName string) (
 
 	return users, nil
 }
+
+func (rw rw) SetLastLoginUser(ctx context.Context, userID uuid.UUID) error {
+	if _, err := rw.store.Exec(
+		ctx,
+		`UPDATE 
+			users SET last_login=now()
+		WHERE id=$1`,
+		userID,
+	); err != nil {
+		return err
+	}
+
+	return nil
+}
