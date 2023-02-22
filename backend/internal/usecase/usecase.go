@@ -6,6 +6,9 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 
+	"kek/internal/adapters"
+	amqp "kek/internal/amqp"
+
 	"kek/internal/config"
 	"kek/internal/domain"
 	"kek/internal/repository"
@@ -26,6 +29,7 @@ type User interface {
 type Friend interface {
 	CreateFriend(ctx context.Context, userID, friendID uuid.UUID) error
 	DeleteFriend(ctx context.Context, userID, friendID uuid.UUID) error
+	GetFriendsWithUserID(ctx context.Context, userID uuid.UUID) ([]*domain.User, error)
 }
 
 type Post interface {
@@ -33,6 +37,11 @@ type Post interface {
 	GetPostByID(ctx context.Context, postID uuid.UUID) (*domain.Post, error)
 	UpdatePost(ctx context.Context, text string, postID, userID uuid.UUID) (*domain.Post, error)
 	DeletePostByID(ctx context.Context, postID, userID uuid.UUID) error
+	GetPostsByAuthorID(ctx context.Context, authorID uuid.UUID) ([]*domain.Post, error)
+}
+
+type Feed interface {
+	GetFeedByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]*domain.Post, error)
 }
 
 type ServiceUsecase interface {
@@ -40,17 +49,23 @@ type ServiceUsecase interface {
 	User
 	Friend
 	Post
+	Feed
 }
 
 type uc struct {
 	serviceRepo repository.ServiceRepository
+	queue       *amqp.Publisher
+	feedWorker  *adapters.FeedWorkerService
 	logger      *zap.Logger
 	jwt         *config.Jwt
 }
 
-func New(mr repository.ServiceRepository, logger *zap.Logger, jwt *config.Jwt) ServiceUsecase {
+func New(mr repository.ServiceRepository, q *amqp.Publisher,
+	w *adapters.FeedWorkerService, logger *zap.Logger, jwt *config.Jwt) ServiceUsecase {
 	return &uc{
 		serviceRepo: mr,
+		queue:       q,
+		feedWorker:  w,
 		logger:      logger,
 		jwt:         jwt,
 	}

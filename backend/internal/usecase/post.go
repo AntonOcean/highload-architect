@@ -3,6 +3,10 @@ package usecase
 import (
 	"context"
 	"errors"
+	"fmt"
+	"time"
+
+	amqp "kek/internal/amqp"
 
 	"github.com/google/uuid"
 
@@ -24,12 +28,27 @@ func (uc uc) CreatePost(ctx context.Context, text string, authorID uuid.UUID) (*
 		ID:       uuid.New(),
 		Text:     text,
 		AuthorID: authorID,
+		Created:  time.Now(),
 	}
 
 	err = uc.serviceRepo.CreatePost(ctx, post)
 	if err != nil {
 		return nil, err
 	}
+
+	go func() {
+		err := uc.queue.Push(&amqp.Message{
+			Data: domain.NewPost{
+				PostID:   post.ID,
+				AuthorID: authorID,
+			},
+			Timestamp: time.Now(),
+			Key:       string(amqp.PostEvent),
+		})
+		if err != nil {
+			uc.logger.Error(fmt.Sprintf("error push msg new post: %+v", err))
+		}
+	}()
 
 	return post, nil
 }
@@ -77,4 +96,8 @@ func (uc uc) DeletePostByID(ctx context.Context, postID, userID uuid.UUID) error
 	}
 
 	return uc.serviceRepo.DeletePostByID(ctx, postID)
+}
+
+func (uc uc) GetPostsByAuthorID(ctx context.Context, authorID uuid.UUID) ([]*domain.Post, error) {
+	return uc.serviceRepo.GetPostsByAuthorID(ctx, authorID)
 }

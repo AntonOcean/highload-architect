@@ -86,6 +86,52 @@ func (_m *ServiceRepository) DeletePostByID(ctx context.Context, postID uuid.UUI
 	return r0
 }
 
+// GetFeedByUserID provides a mock function with given fields: ctx, userID, limit, offset
+func (_m *ServiceRepository) GetFeedByUserID(ctx context.Context, userID uuid.UUID, limit int, offset int) ([]*domain.Post, error) {
+	ret := _m.Called(ctx, userID, limit, offset)
+
+	var r0 []*domain.Post
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, int, int) []*domain.Post); ok {
+		r0 = rf(ctx, userID, limit, offset)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, int, int) error); ok {
+		r1 = rf(ctx, userID, limit, offset)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetFriendsWithUserID provides a mock function with given fields: ctx, userID
+func (_m *ServiceRepository) GetFriendsWithUserID(ctx context.Context, userID uuid.UUID) ([]*domain.User, error) {
+	ret := _m.Called(ctx, userID)
+
+	var r0 []*domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) []*domain.User); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetPostByID provides a mock function with given fields: ctx, postID
 func (_m *ServiceRepository) GetPostByID(ctx context.Context, postID uuid.UUID) (*domain.Post, error) {
 	ret := _m.Called(ctx, postID)
@@ -102,6 +148,29 @@ func (_m *ServiceRepository) GetPostByID(ctx context.Context, postID uuid.UUID) 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
 		r1 = rf(ctx, postID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetPostsByAuthorID provides a mock function with given fields: ctx, authorID
+func (_m *ServiceRepository) GetPostsByAuthorID(ctx context.Context, authorID uuid.UUID) ([]*domain.Post, error) {
+	ret := _m.Called(ctx, authorID)
+
+	var r0 []*domain.Post
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) []*domain.Post); ok {
+		r0 = rf(ctx, authorID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, authorID)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -153,6 +222,20 @@ func (_m *ServiceRepository) GetUsersByPrefix(ctx context.Context, firstName str
 	}
 
 	return r0, r1
+}
+
+// SetLastLoginUser provides a mock function with given fields: ctx, userID
+func (_m *ServiceRepository) SetLastLoginUser(ctx context.Context, userID uuid.UUID) error {
+	ret := _m.Called(ctx, userID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) error); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }
 
 // UpdatePost provides a mock function with given fields: ctx, text, postID

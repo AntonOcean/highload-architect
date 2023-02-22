@@ -54,6 +54,8 @@ func TestUsecase_GetUserByID(t *testing.T) {
 
 		uc := usecase.New(
 			&mockServiceRepo,
+			nil,
+			nil,
 			logger,
 			&config.Jwt{
 				ExpirationMinutes: 10,

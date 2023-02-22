@@ -95,3 +95,37 @@ func (rH RouterHandler) DeleteFriendByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{})
 }
+
+// GetFriendsByUserID godoc
+// @Summary Получить друзей пользователя с ИД user_id
+// @Description Получить друзей пользователя с ИД user_id
+// @tags friends,admin
+// @Accept json
+// @Produce json
+// @Param user_id path string true "user ID"
+// @Success 200 []formatter.GetUser "Успешно получен пост"
+// @Failure 400 "Невалидные данные"
+// @Failure 401 "Неавторизованный доступ"
+// @Failure 500 {object} formatter.Error "Ошибка сервера"
+// @Failure 503 {object} formatter.Error "Ошибка сервера"
+// @Header 500,503 {integer} Retry-After "Время, через которое еще раз нужно сделать запрос"
+// @Router /api/v1/admin/user/:user_id/friend [get].
+func (rH RouterHandler) GetFriendsByUserID(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	request := formatter.DomainIDType(c.Param("user_id"))
+
+	userID, err := request.ToDomain()
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	users, err := rH.ucService.GetFriendsWithUserID(ctx, userID)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, formatter.CreateUserListResp(users))
+}

@@ -23,6 +23,7 @@ type User interface {
 type Friend interface {
 	CreateFriend(ctx context.Context, userID, friendID uuid.UUID) error
 	DeleteFriend(ctx context.Context, userID, friendID uuid.UUID) error
+	GetFriendsWithUserID(ctx context.Context, userID uuid.UUID) ([]*domain.User, error)
 }
 
 type Post interface {
@@ -30,6 +31,8 @@ type Post interface {
 	GetPostByID(ctx context.Context, postID uuid.UUID) (*domain.Post, error)
 	UpdatePost(ctx context.Context, text string, postID uuid.UUID) error
 	DeletePostByID(ctx context.Context, postID uuid.UUID) error
+	GetPostsByAuthorID(ctx context.Context, authorID uuid.UUID) ([]*domain.Post, error)
+	GetFeedByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]*domain.Post, error)
 }
 
 type ServiceRepository interface {

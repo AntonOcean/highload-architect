@@ -34,6 +34,10 @@ func New(
 	apiAuth := router.Group("/api/v1", routerHandler.AuthMiddleware())
 	routerHandler.RegisterAuthRoutes(apiAuth)
 
+	// TODO add middleware check this is admin
+	apiAdmin := router.Group("/api/v1/admin")
+	routerHandler.RegisterAdminRoutes(apiAdmin)
+
 	return router
 }
 
