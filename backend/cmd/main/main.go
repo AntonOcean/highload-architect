@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	"kek/internal/adapters"
+	amqp "kek/internal/amqp"
+
 	"go.uber.org/zap"
 
 	_ "kek/docs"
@@ -43,8 +46,23 @@ func main() {
 		}
 	}()
 
+	publisher, err := amqp.BuildPublisher(cfg)
+	if err != nil {
+		logger.Error(err.Error())
+	}
+
+	defer func() {
+		if publisher != nil {
+			_ = publisher.Close()
+		}
+	}()
+
 	uc := usecase.New(
 		repository.New(dbPool),
+		publisher,
+		adapters.NewFeedWorkerService(
+			adapters.NewRestyClient(cfg.FeedWorker.HOST, cfg.FeedWorker.ConnectionTimeout),
+		),
 		logger,
 		&cfg.Jwt,
 	)

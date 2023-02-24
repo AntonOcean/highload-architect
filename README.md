@@ -33,3 +33,7 @@
 ### Добавление репликации
 
 [Отчет](https://github.com/AntonOcean/highload-architect/blob/e1f1b57b659ac771825fc25b2a18e71310dd0964/backend/docs/replica-report.pdf)
+
+### Добавление кеша для ленты новостей
+
+[Отчет](https://github.com/AntonOcean/highload-architect/blob/cfe9084b72d4c5f1045a94ef62b12bf2ebfa24e7/backend/docs/cache-report.pdf)

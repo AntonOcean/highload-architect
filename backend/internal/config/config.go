@@ -13,12 +13,22 @@ type Jwt struct {
 	SignKey           string `env:"JWT_KEY,notEmpty"`
 }
 
+type RabbitMQ struct {
+	DSN   string `env:"RABBITMQ_DSN,notEmpty"`
+	Queue string `env:"RABBITMQ_QUEUE,notEmpty"`
+}
+
 type Config struct {
 	LogLevel string `env:"LOG_LEVEL,notEmpty"`
 
 	HTTPAPI struct {
 		Addr                  string `env:"ADDR,notEmpty"`
 		ServerShutdownTimeout time.Duration
+	}
+
+	FeedWorker struct {
+		HOST              string `env:"FEEDWORKER_HOST,notEmpty"`
+		ConnectionTimeout time.Duration
 	}
 
 	Postgres struct {
@@ -29,6 +39,8 @@ type Config struct {
 		Database          string `env:"POSTGRES_DB,notEmpty"`
 		ConnectionTimeout time.Duration
 	}
+
+	RabbitMQ RabbitMQ
 
 	Jwt
 }
@@ -56,6 +68,7 @@ func setStaticSettings(cfg *Config) *Config {
 	cfg.HTTPAPI.ServerShutdownTimeout = 10 * time.Second
 
 	cfg.Postgres.ConnectionTimeout = 5 * time.Second
+	cfg.FeedWorker.ConnectionTimeout = 5 * time.Second
 
 	return cfg
 }

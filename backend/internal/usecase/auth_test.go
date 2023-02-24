@@ -20,7 +20,6 @@ import (
 	"kek/internal/mocks"
 )
 
-//nolint:funlen // ok
 func TestUsecase_AuthUser(t *testing.T) {
 	t.Run("auth user", func(t *testing.T) {
 		mockServiceRepo := mocks.ServiceRepository{}
@@ -58,6 +57,8 @@ func TestUsecase_AuthUser(t *testing.T) {
 
 		uc := usecase.New(
 			&mockServiceRepo,
+			nil,
+			nil,
 			logger,
 			&config.Jwt{
 				ExpirationMinutes: 10,
@@ -107,6 +108,8 @@ func TestUsecase_CreateToken(t *testing.T) {
 
 		uc := usecase.New(
 			&mockServiceRepo,
+			nil,
+			nil,
 			logger,
 			&config.Jwt{
 				ExpirationMinutes: 10,
@@ -156,6 +159,8 @@ func TestUsecase_GetToken(t *testing.T) {
 
 		uc := usecase.New(
 			&mockServiceRepo,
+			nil,
+			nil,
 			logger,
 			&config.Jwt{
 				ExpirationMinutes: 10,

@@ -25,6 +25,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
   pg-1:
     image: bitnami/postgresql-repmgr:14
     ports:
@@ -47,6 +48,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
   pg-2:
     image: bitnami/postgresql-repmgr:14
     ports:
@@ -69,6 +71,7 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
   pgpool:
     image: bitnami/pgpool:latest
     ports:
@@ -94,6 +97,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   migrations:
     build:
       context: ./backend
@@ -107,6 +111,18 @@ services:
     depends_on:
       pgpool:
         condition: service_healthy
+
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: [ "CMD-SHELL", "rabbitmqctl status" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   backend:
     build:
       context: ./backend
@@ -123,9 +139,43 @@ services:
       - ADDR=5050
       - JWT_EXPIRATION=10
       - JWT_KEY=kek
+      - RABBITMQ_DSN=amqp://guest:guest@rabbitmq:5672/
+      - RABBITMQ_QUEUE=worker
+      - FEEDWORKER_HOST=http://feed-worker:6050
     depends_on:
       migrations:
         condition: service_completed_successfully
+      rabbitmq:
+        condition: service_healthy
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 30s
+      retries: 50
+
+  feed-worker:
+    build:
+      context: ./feed-worker
+      dockerfile: ./Dockerfile
+    ports:
+      - "6050:6050"
+    environment:
+      - RABBITMQ_DSN=amqp://guest:guest@rabbitmq:5672/
+      - RABBITMQ_QUEUE=worker
+      - LOG_LEVEL=debug
+      - ADDR=6050
+      - BACKEND_HOST=http://backend:5050
+      - REDIS_HOSTS=redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   pg_0_data:

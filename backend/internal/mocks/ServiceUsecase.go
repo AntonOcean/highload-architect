@@ -137,6 +137,52 @@ func (_m *ServiceUsecase) DeletePostByID(ctx context.Context, postID uuid.UUID, 
 	return r0
 }
 
+// GetFeedByUserID provides a mock function with given fields: ctx, userID, limit, offset
+func (_m *ServiceUsecase) GetFeedByUserID(ctx context.Context, userID uuid.UUID, limit int, offset int) ([]*domain.Post, error) {
+	ret := _m.Called(ctx, userID, limit, offset)
+
+	var r0 []*domain.Post
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID, int, int) []*domain.Post); ok {
+		r0 = rf(ctx, userID, limit, offset)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID, int, int) error); ok {
+		r1 = rf(ctx, userID, limit, offset)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetFriendsWithUserID provides a mock function with given fields: ctx, userID
+func (_m *ServiceUsecase) GetFriendsWithUserID(ctx context.Context, userID uuid.UUID) ([]*domain.User, error) {
+	ret := _m.Called(ctx, userID)
+
+	var r0 []*domain.User
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) []*domain.User); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.User)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetPostByID provides a mock function with given fields: ctx, postID
 func (_m *ServiceUsecase) GetPostByID(ctx context.Context, postID uuid.UUID) (*domain.Post, error) {
 	ret := _m.Called(ctx, postID)
@@ -153,6 +199,29 @@ func (_m *ServiceUsecase) GetPostByID(ctx context.Context, postID uuid.UUID) (*d
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
 		r1 = rf(ctx, postID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// GetPostsByAuthorID provides a mock function with given fields: ctx, authorID
+func (_m *ServiceUsecase) GetPostsByAuthorID(ctx context.Context, authorID uuid.UUID) ([]*domain.Post, error) {
+	ret := _m.Called(ctx, authorID)
+
+	var r0 []*domain.Post
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) []*domain.Post); ok {
+		r0 = rf(ctx, authorID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]*domain.Post)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, authorID)
 	} else {
 		r1 = ret.Error(1)
 	}

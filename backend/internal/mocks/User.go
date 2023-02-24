@@ -76,6 +76,20 @@ func (_m *User) GetUsersByPrefix(ctx context.Context, firstName string, lastName
 	return r0, r1
 }
 
+// SetLastLoginUser provides a mock function with given fields: ctx, userID
+func (_m *User) SetLastLoginUser(ctx context.Context, userID uuid.UUID) error {
+	ret := _m.Called(ctx, userID)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) error); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 type mockConstructorTestingTNewUser interface {
 	mock.TestingT
 	Cleanup(func())

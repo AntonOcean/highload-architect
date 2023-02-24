@@ -59,7 +59,7 @@ func (rH RouterHandler) CreatePost(c *gin.Context) {
 // GetPostByID godoc
 // @Summary Получить пост по ИД
 // @Description Получить пост по ИД
-// @tags posts
+// @tags posts,admin
 // @Accept json
 // @Produce json
 // @Param id path string true "ID"
@@ -185,4 +185,38 @@ func (rH RouterHandler) DeletePost(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{})
+}
+
+// GetPostsByUserID godoc
+// @Summary Получить посты пользователя с ИД user_id
+// @Description Получить посты пользователя с ИД user_id
+// @tags posts,admin
+// @Accept json
+// @Produce json
+// @Param user_id path string true "user ID"
+// @Success 200 []formatter.GetPost "Успешно получен пост"
+// @Failure 400 "Невалидные данные"
+// @Failure 401 "Неавторизованный доступ"
+// @Failure 500 {object} formatter.Error "Ошибка сервера"
+// @Failure 503 {object} formatter.Error "Ошибка сервера"
+// @Header 500,503 {integer} Retry-After "Время, через которое еще раз нужно сделать запрос"
+// @Router /api/v1/admin/user/:user_id/post [get].
+func (rH RouterHandler) GetPostsByUserID(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	request := formatter.DomainIDType(c.Param("user_id"))
+
+	userID, err := request.ToDomain()
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	posts, err := rH.ucService.GetPostsByAuthorID(ctx, userID)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, formatter.CreatePostListResp(posts))
 }

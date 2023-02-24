@@ -36,10 +36,11 @@ func (rw rw) GetPostByID(ctx context.Context, postID uuid.UUID) (*domain.Post, e
 		`SELECT 
 			p.id,
 			p.text,
-			p.author_id
+			p.author_id,
+			p.created
 		FROM posts p 
 		WHERE p.id = $1`, postID,
-	).Scan(&p.ID, &p.Text, &p.AuthorID); err != nil {
+	).Scan(&p.ID, &p.Text, &p.AuthorID, &p.Created); err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, formatter.ErrNotFound
 		}
@@ -76,4 +77,76 @@ func (rw rw) DeletePostByID(ctx context.Context, postID uuid.UUID) error {
 	}
 
 	return nil
+}
+
+func (rw rw) GetPostsByAuthorID(ctx context.Context, authorID uuid.UUID) ([]*domain.Post, error) {
+	rows, err := rw.store.Query(
+		ctx,
+		`SELECT 
+			p.id,
+			p.text,
+			p.author_id,
+			p.created
+		FROM posts p
+		WHERE p.author_id=$1
+		ORDER BY p.created DESC
+		LIMIT 1000;`,
+		authorID,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []*domain.Post
+
+	for rows.Next() {
+		p := domain.Post{}
+
+		err := rows.Scan(&p.ID, &p.Text, &p.AuthorID, &p.Created)
+
+		if err != nil {
+			return nil, err
+		}
+
+		posts = append(posts, &p)
+	}
+
+	return posts, nil
+}
+
+func (rw rw) GetFeedByUserID(ctx context.Context, userID uuid.UUID, limit, offset int) ([]*domain.Post, error) {
+	rows, err := rw.store.Query(
+		ctx,
+		`SELECT 
+			p.id,
+			p.text,
+			p.author_id,
+			p.created
+		FROM friends f
+		JOIN posts p ON p.author_id=f.friend_id
+		WHERE f.user_id=$1
+		ORDER BY p.created DESC
+		OFFSET $2
+		LIMIT $3;`,
+		userID, offset, limit,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []*domain.Post
+
+	for rows.Next() {
+		p := domain.Post{}
+
+		err := rows.Scan(&p.ID, &p.Text, &p.AuthorID, &p.Created)
+
+		if err != nil {
+			return nil, err
+		}
+
+		posts = append(posts, &p)
+	}
+
+	return posts, nil
 }
