@@ -37,3 +37,7 @@
 ### Добавление кеша для ленты новостей
 
 [Отчет](https://github.com/AntonOcean/highload-architect/blob/cfe9084b72d4c5f1045a94ef62b12bf2ebfa24e7/backend/docs/cache-report.pdf)
+
+### Создание чатов с шардированием
+[Отчет](https://github.com/AntonOcean/highload-architect/blob/72782c850ea92831bab8cca15c0db9eb749eabdd/chat/docs/sharding-report.pdf)
+<br>``docker-compose -f docker-compose.chat.yaml up --scale pg-worker=5``

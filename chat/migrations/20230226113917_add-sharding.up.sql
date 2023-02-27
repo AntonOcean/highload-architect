@@ -1,0 +1,1 @@
+SELECT create_distributed_table('chats', 'sender_id');
