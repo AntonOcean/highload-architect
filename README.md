@@ -41,3 +41,7 @@
 ### Создание чатов с шардированием
 [Отчет](https://github.com/AntonOcean/highload-architect/blob/72782c850ea92831bab8cca15c0db9eb749eabdd/chat/docs/sharding-report.pdf)
 <br>``docker-compose -f docker-compose.chat.yaml up --scale pg-worker=5``
+
+### Веб-сокеты для обновления ленты онлайн
+[Отчет](https://github.com/AntonOcean/highload-architect/blob/bba4f994ed340df5566dded8767f3273d002d912/ws-feed/docs/websocket-report.pdf)
+<br>``docker-compose -f docker-compose.ws.yaml up``
