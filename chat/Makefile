@@ -26,3 +26,7 @@ test:
 .PHONY: build
 build:
 	go build -tags=jsoniter -o ./tmp/main ./cmd/main
+
+.PHONY: ht
+ht:
+	./scripts/highload_data.sh
