@@ -2,13 +2,13 @@
 open-jmeter:
 	open /usr/local/bin/jmeter
 
-.PHONY: run-jmeter-r
-run-jmeter-r:
-	jmeter -n -t ./HTTP_read.jmx -l ./results-r.csv -e -o ./report-r
+.PHONY: run-jmeter-p
+run-jmeter-p:
+	jmeter -n -t ./HTTP_read_chat.jmx -l ./results-p.csv -e -o ./report-p
 
-.PHONY: run-jmeter-w
-run-jmeter-w:
-	jmeter -n -t ./HTTP_write.jmx -l ./results-w.csv -e -o ./report-w
+.PHONY: run-jmeter-t
+run-jmeter-t:
+	jmeter -n -t ./HTTP_read_chat.jmx -l ./results-t.csv -e -o ./report-t
 
 .PHONY: show-nodes
 show-nodes:
