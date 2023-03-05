@@ -3,7 +3,7 @@ package api
 import (
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"chat/internal/repository"
 
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,7 @@ import (
 
 func New(
 	log *zap.Logger,
-	db *pgxpool.Pool,
+	db repository.ServiceRepository,
 	ucService usecase.ServiceUsecase,
 ) *gin.Engine {
 	router := newGINRouter(log)
@@ -47,7 +47,7 @@ func newGINRouter(log *zap.Logger) *gin.Engine {
 	return router
 }
 
-func registerHealthCheck(router *gin.Engine, db *pgxpool.Pool) {
+func registerHealthCheck(router *gin.Engine, db repository.ServiceRepository) {
 	handler := newHealthCheckHandler(db)
 
 	router.GET("/health", handler.Health)

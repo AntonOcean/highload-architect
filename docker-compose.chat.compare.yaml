@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  chat-tarantool:
+    image: tarantool/tarantool
+    environment:
+      TARANTOOL_MEMTX_MEMORY: 671088640
+    ports:
+      - "3301:3301"
+
+  chat-postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: "default-db"
+      POSTGRES_USER: "someuser"
+      POSTGRES_PASSWORD: "p@ssw0rD"
+    ports:
+      - "5432:5432"

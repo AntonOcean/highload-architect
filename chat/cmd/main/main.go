@@ -15,9 +15,11 @@ import (
 	"chat/internal/api"
 	"chat/internal/config"
 	"chat/internal/repository"
+	t "chat/internal/tarantool.repository"
 	"chat/internal/usecase"
 )
 
+//nolint:nestif,funlen // ok
 func main() {
 	cfg, err := config.Read()
 	if err != nil {
@@ -31,26 +33,45 @@ func main() {
 		_ = logger.Sync()
 	}()
 
-	dbPool, err := repository.Connect(cfg)
-	if err != nil {
-		logger.Error(err.Error())
+	var repo repository.ServiceRepository
+
+	if cfg.Tarantool.Host != "" {
+		db, err := t.ConnectTarantool(cfg)
+		if err != nil {
+			logger.Error(err.Error())
+		}
+
+		defer func() {
+			if db != nil {
+				_ = db.Close()
+			}
+		}()
+
+		repo = t.NewTarantool(db)
+	} else {
+		dbPool, err := repository.Connect(cfg)
+		if err != nil {
+			logger.Error(err.Error())
+		}
+
+		defer func() {
+			if dbPool != nil {
+				dbPool.Close()
+			}
+		}()
+
+		repo = repository.New(dbPool)
 	}
 
-	defer func() {
-		if dbPool != nil {
-			dbPool.Close()
-		}
-	}()
-
 	uc := usecase.New(
-		repository.New(dbPool),
+		repo,
 		logger,
 		&cfg.Jwt,
 	)
 
 	httpAPIrouter := api.New(
 		logger,
-		dbPool,
+		repo,
 		uc,
 	)
 
