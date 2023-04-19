@@ -28,12 +28,24 @@ type Config struct {
 		ConnectionTimeout time.Duration
 	}
 
+	Tarantool struct {
+		Host              string `env:"TARANTOOL_HOST"`
+		Port              string `env:"TARANTOOL_PORT"`
+		ConnectionTimeout time.Duration
+	}
+
 	Jwt
 }
 
 func (cfg *Config) PostgresDSN() string {
 	return fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable",
 		cfg.Postgres.Host, cfg.Postgres.Port, cfg.Postgres.Database, cfg.Postgres.User, cfg.Postgres.Password,
+	)
+}
+
+func (cfg *Config) TarantoolDSN() string {
+	return fmt.Sprintf("%s:%s",
+		cfg.Tarantool.Host, cfg.Tarantool.Port,
 	)
 }
 
@@ -53,6 +65,8 @@ func setStaticSettings(cfg *Config) *Config {
 	cfg.HTTPAPI.ServerShutdownTimeout = 10 * time.Second
 
 	cfg.Postgres.ConnectionTimeout = 5 * time.Second
+
+	cfg.Tarantool.ConnectionTimeout = 5 * time.Second
 
 	return cfg
 }
