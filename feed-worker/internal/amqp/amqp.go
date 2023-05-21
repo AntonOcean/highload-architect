@@ -59,6 +59,7 @@ func (c *Consumer) StartConsume(log *zap.Logger, uc usecase.ServiceUsecase) erro
 		return err
 	}
 
+	// TODO Надо уметь не терять сообщения при ошибке, а переотправлять их AckMode
 	response, err := c.amqpDialCh.Consume(
 		q.Name,
 		"",
